@@ -54,10 +54,10 @@ interface Navbar1Props {
 
 const Navbar = ({
   logo = {
-    url: "https://www.shadcnblocks.com",
+    url: "/",
     src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
     alt: "logo",
-    title: "Shadcnblocks.com",
+    title: "Draftly",
   },
   menu = [
     { title: "Home", url: "/" },
@@ -73,6 +73,10 @@ const Navbar = ({
       title: "Contact",
       url: "/contact",
     },
+    {
+      title: "Dashboard",
+      url: "/dashboard",
+    },
   ],
   auth = {
     login: { title: "Login", url: "/login" },
@@ -81,7 +85,7 @@ const Navbar = ({
   className,
 }: Navbar1Props) => {
   return (
-    <section className={cn("py-4", className)}>
+    <section className={cn("py-4 sticky top-0", className)}>
       <div className="container mx-auto px-4">
         {/* Desktop Menu */}
         <nav className="hidden items-center justify-between lg:flex">
