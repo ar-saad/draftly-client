@@ -1,16 +1,24 @@
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
+import BlogCard from "@/components/modules/homepage/BlogCard";
+import { blogService } from "@/services/blog.service";
+import { Blog } from "@/types";
 
 export default async function Home() {
-  const session = await authClient.getSession();
-  console.log(session);
+  const blogs = await blogService.getBlogs(
+    {
+      isFeatured: false,
+      // search: "lorem",
+    },
+    {
+      cache: "no-store",
+      // revalidate: 10,
+    },
+  );
 
   return (
-    <div className="w-full h-[calc(100vh-200px)] flex flex-col justify-center items-center">
-      <h1 className="text-5xl font-bold">Home</h1>
-      <Button className="m-10" variant="outline">
-        Click Here
-      </Button>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 max-w-7xl mx-auto px-5 my-10">
+      {blogs.data.data.result.map((blog: Blog) => (
+        <BlogCard key={blog.id} blog={blog} />
+      ))}
     </div>
   );
 }

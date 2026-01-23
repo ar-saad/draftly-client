@@ -19,22 +19,18 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
+import { env } from "@/env";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const handleGoogleLogin = async () => {
-    const data = await authClient.signIn.social({
+    await authClient.signIn.social({
       provider: "google",
-      callbackURL: process.env.NEXT_PUBLIC_CLIENT_URL,
+      callbackURL: env.NEXT_PUBLIC_FRONTEND_URL,
     });
-
-    console.log(data);
   };
-
-  const session = authClient.useSession();
-  console.log(session);
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
