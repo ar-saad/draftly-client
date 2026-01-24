@@ -12,6 +12,7 @@ import {
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
@@ -20,11 +21,46 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { env } from "@/env";
+import { useForm } from "@tanstack/react-form";
+import * as z from "zod";
+import { toast } from "sonner";
+
+const formSchema = z.object({
+  email: z.email().min(1, "This field is required"),
+  password: z.string().min(8, "Must be at least 8 characters long."),
+});
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    validators: {
+      onSubmit: formSchema,
+    },
+    onSubmit: async ({ value }) => {
+      const toastId = toast.loading("User login processing");
+      try {
+        const { data, error } = await authClient.signIn.email(value);
+
+        if (error) {
+          toast.error(error.message, { id: toastId });
+          return;
+        }
+
+        toast.success("User login successful", { id: toastId });
+      } catch (error) {
+        console.error(error);
+
+        toast.error("Something went wrong, please try again", { id: toastId });
+      }
+    },
+  });
+
   const handleGoogleLogin = async () => {
     await authClient.signIn.social({
       provider: "google",
@@ -40,7 +76,12 @@ export function LoginForm({
           <CardDescription>Login with your Google account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              form.handleSubmit();
+            }}
+          >
             <FieldGroup>
               <Field>
                 <Button
@@ -60,27 +101,60 @@ export function LoginForm({
               <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
                 Or continue with
               </FieldSeparator>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </Field>
-              <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
-                </div>
-                <Input id="password" type="password" required />
-              </Field>
+              <form.Field
+                name="email"
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="email"
+                        aria-invalid={isInvalid}
+                        placeholder="Your email"
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+              />
+              <form.Field
+                name="password"
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                      <Input
+                        id={field.name}
+                        name={field.name}
+                        type="password"
+                        aria-invalid={isInvalid}
+                        placeholder="Your password"
+                        value={field.state.value}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                      <a
+                        href="#"
+                        className="flex justify-end text-sm underline-offset-4 hover:underline"
+                      >
+                        Forgot your password?
+                      </a>
+                    </Field>
+                  );
+                }}
+              />
               <Field>
                 <Button type="submit">Login</Button>
                 <FieldDescription className="text-center">

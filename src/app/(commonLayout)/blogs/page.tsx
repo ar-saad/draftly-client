@@ -1,4 +1,4 @@
-export default function BlogPage() {
+export default function BlogsPage() {
   return (
     <div className="w-full h-[calc(100vh-200px)] flex flex-col justify-center items-center">
       <h1 className="text-2xl font-bold mx-auto w-125">

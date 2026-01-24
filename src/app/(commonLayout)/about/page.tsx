@@ -1,9 +1,23 @@
-export default async function AboutPage() {
-  //* To simulate API calls
-  await new Promise((resolve) => setTimeout(resolve, 4000));
+"use client";
 
-  //* To simulate an error
-  // throw new Error("Something went wrong");
+import { getBlogs } from "@/actions/blog.actions";
+import { useEffect, useState } from "react";
+
+export default function AboutPage() {
+  const [data, setData] = useState();
+  const [error, setError] = useState<{ message: string } | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await getBlogs();
+
+      setData(data);
+      setError(error);
+    })();
+  }, []);
+
+  console.log(data);
+  console.log(error);
 
   return (
     <div className="w-full h-[calc(100vh-200px)] flex flex-col justify-center items-center">

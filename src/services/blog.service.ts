@@ -43,13 +43,22 @@ export const blogService = {
         config.next = { revalidate: options.revalidate };
       }
 
-      console.log(url.toString());
-
       const res = await fetch(url.toString(), config);
 
       const blogs = await res.json();
 
       return { data: blogs, error: null };
+    } catch (error) {
+      console.error(error);
+      return { data: null, error: { message: "Something went wrong." } };
+    }
+  },
+
+  getBlogById: async function (id: string) {
+    try {
+      const res = await fetch(`${API_URL}/blogs/${id}`);
+      const blog = await res.json();
+      return { data: blog, error: null };
     } catch (error) {
       console.error(error);
       return { data: null, error: { message: "Something went wrong." } };

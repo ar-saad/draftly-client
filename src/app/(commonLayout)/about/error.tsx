@@ -16,11 +16,14 @@ export default function AboutError({
   }, []);
 
   return (
-    <div className="w-full h-[calc(100vh-200px)] flex flex-col justify-center items-center">
-      <h1 className="text-5xl font-bold">{error.message}</h1>
-      <Button onClick={() => reset()} className="mt-5">
-        Retry
-      </Button>
+    <div className="max-w-7xl mx-auto p-5 flex justify-center my-20">
+      <div className="flex flex-col justify-center items-center">
+        <h1 className="text-red-400 font-bold text-3xl">Error</h1>
+        <h1 className="text-xl font-bold">{error.message}</h1>
+        <Button onClick={() => reset()} className="mt-5">
+          Retry
+        </Button>
+      </div>
     </div>
   );
 }
