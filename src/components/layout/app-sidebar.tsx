@@ -15,6 +15,7 @@ import Link from "next/link";
 import { adminRoutes } from "@/routes/adminRoutes";
 import { userRoutes } from "@/routes/userRoutes";
 import { Route } from "@/types";
+import { UserRoles } from "@/constants/userRoles";
 
 export function AppSidebar({
   user,
@@ -25,10 +26,10 @@ export function AppSidebar({
   let routes: Route[] = [];
 
   switch (user.role) {
-    case "admin":
+    case UserRoles.admin:
       routes = adminRoutes;
       break;
-    case "user":
+    case UserRoles.user:
       routes = userRoutes;
       break;
     default:
@@ -36,18 +37,40 @@ export function AppSidebar({
       break;
   }
 
+  const logo = {
+    url: "/",
+    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
+    alt: "logo",
+    title: "Draftly",
+  };
+
   return (
     <Sidebar {...props}>
       <SidebarContent>
+        {/* Logo */}
+        <div className="flex mt-5 px-5">
+          <Link href={logo.url} className="flex items-center gap-2">
+            <img
+              src={logo.src}
+              className="max-h-10 dark:invert"
+              alt={logo.alt}
+            />
+            <span className="text-2xl font-semibold tracking-tighter">
+              {logo.title}
+            </span>
+          </Link>
+        </div>
         {routes.map((item) => (
-          <SidebarGroup key={item.title}>
+          <SidebarGroup key={item.title} className="px-2">
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {item.items.map((item) => (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton asChild>
-                      <Link href={item.url}>{item.title}</Link>
+                      <Link href={item.url}>
+                        <item.icon className="h-4 w-4" /> {item.title}
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))}
