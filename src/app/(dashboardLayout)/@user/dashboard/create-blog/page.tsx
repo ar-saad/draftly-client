@@ -1,7 +1,9 @@
-export default function CreateBlogPage() {
+import CreateBlogFormClient from "../../../../../components/modules/userDashboard/createBlog/CreateBlogFormClient";
+
+export default function UserDashboardCreateBlogPage() {
   return (
-    <div>
-      <h1>Create Blog Page</h1>
+    <div className="h-full w-full flex justify-center items-center">
+      <CreateBlogFormClient />
     </div>
   );
 }

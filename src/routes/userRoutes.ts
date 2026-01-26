@@ -16,7 +16,7 @@ export const userRoutes: Route[] = [
         icon: FilePlus,
       },
       {
-        title: "Blog List",
+        title: "Blog History",
         url: "/dashboard/blogs",
         icon: ScrollText,
       },

@@ -1,4 +1,6 @@
 import { env } from "@/env";
+import { Blog } from "@/types";
+import { cookies } from "next/headers";
 
 const API_URL = env.API_URL;
 
@@ -9,6 +11,7 @@ const API_URL = env.API_URL;
 interface GetBlogsParams {
   isFeatured?: boolean;
   search?: string;
+  page?: string;
 }
 
 interface BlogServiceOptions {
@@ -43,6 +46,8 @@ export const blogService = {
         config.next = { revalidate: options.revalidate };
       }
 
+      config.next = { ...config.next, tags: ["blogs"] };
+
       const res = await fetch(url.toString(), config);
 
       const blogs = await res.json();
@@ -59,6 +64,28 @@ export const blogService = {
       const res = await fetch(`${API_URL}/blogs/${id}`);
       const blog = await res.json();
       return { data: blog, error: null };
+    } catch (error) {
+      console.error(error);
+      return { data: null, error: { message: "Something went wrong." } };
+    }
+  },
+
+  createBlog: async (blogData: Partial<Blog>) => {
+    try {
+      const cookieStore = await cookies();
+
+      const res = await fetch(`${API_URL}/blogs`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Cookie: cookieStore.toString(),
+        },
+        body: JSON.stringify(blogData),
+      });
+
+      const data = await res.json();
+
+      return data;
     } catch (error) {
       console.error(error);
       return { data: null, error: { message: "Something went wrong." } };
